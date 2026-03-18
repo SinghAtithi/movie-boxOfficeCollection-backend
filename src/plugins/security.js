@@ -1,12 +1,28 @@
 'use strict';
 
+const fp = require('fastify-plugin');
 const fastifyHelmet = require('@fastify/helmet');
 const fastifyCors = require('@fastify/cors');
+
+function getAllowedOrigins() {
+  const rawOrigins = process.env.CORS_ORIGINS || '*';
+
+  if (rawOrigins.trim() === '*') {
+    return '*';
+  }
+
+  return rawOrigins
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
 
 /**
  * Security plugin: Helmet headers + CORS configuration.
  */
 async function securityPlugin(fastify) {
+  const allowedOrigins = getAllowedOrigins();
+
   // Helmet — sets various HTTP security headers
   await fastify.register(fastifyHelmet, {
     contentSecurityPolicy: {
@@ -30,11 +46,21 @@ async function securityPlugin(fastify) {
 
   // CORS — restrict origins
   await fastify.register(fastifyCors, {
-    origin: '*',
+    origin(origin, callback) {
+      // Allow non-browser requests such as curl, health checks, and server-to-server traffic.
+      if (!origin || allowedOrigins === '*') {
+        callback(null, true);
+        return;
+      }
+
+      callback(null, allowedOrigins.includes(origin));
+    },
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Ingest-Key'],
     maxAge: 86400,
   });
 }
 
-module.exports = securityPlugin;
+module.exports = fp(securityPlugin, {
+  name: 'security-plugin',
+});

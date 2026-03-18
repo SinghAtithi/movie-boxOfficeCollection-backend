@@ -145,7 +145,7 @@ This makes the GET endpoint return values that smoothly increase from `current` 
 | `HOST` | `0.0.0.0` | Bind address |
 | `NODE_ENV` | `development` | Environment (`production` / `development`) |
 | `INGEST_SECRET` | `default-change-me-in-production` | Secret key for POST endpoint |
-| `CORS_ORIGINS` | `*` | Comma-separated allowed origins |
+| `CORS_ORIGINS` | `*` | Comma-separated allowed origins, e.g. `https://movieboxofficedashboard.vercel.app` |
 
 ---
 

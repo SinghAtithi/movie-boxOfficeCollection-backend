@@ -1,5 +1,6 @@
 'use strict';
 
+const fp = require('fastify-plugin');
 const fastifyRateLimit = require('@fastify/rate-limit');
 
 /**
@@ -31,4 +32,6 @@ async function rateLimitPlugin(fastify) {
   });
 }
 
-module.exports = rateLimitPlugin;
+module.exports = fp(rateLimitPlugin, {
+  name: 'rate-limit-plugin',
+});
