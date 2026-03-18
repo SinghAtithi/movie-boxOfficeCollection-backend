@@ -24,9 +24,6 @@ fastify.get('/health', async () => ({
 
 // ── Register Plugins ──────────────────────────────────
 async function build() {
-  await fastify.register(require('@fastify/cors'), {
-    origin: '*',
-  });
   await fastify.register(rateLimitPlugin);
   await fastify.register(securityPlugin);
 

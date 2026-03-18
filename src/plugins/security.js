@@ -29,14 +29,10 @@ async function securityPlugin(fastify) {
   });
 
   // CORS — restrict origins
-  const allowedOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim())
-    : ['*']; // Default to open in dev; lock down in production via env
-
   await fastify.register(fastifyCors, {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'X-Ingest-Key'],
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Ingest-Key'],
     maxAge: 86400,
   });
 }
